@@ -26,10 +26,10 @@ This branch keeps everything in one broad `test` task. It also uses full Spring 
 
 ## CI Shape
 
-The unoptimized branch runs one broad `./gradlew test` job in `Unoptimized test suite - single job`. The optimized branch has two comparable workflow shapes:
+The bad branch runs one broad `./gradlew test` job in `Test suite - single job`. The optimized branch has two comparable workflow shapes:
 
-- `Optimized test suite - fail fast`: runs `unitTest`, then `sliceTest`, then `integrationTest` as separate gated jobs.
-- `Optimized test suite - single job`: runs `./gradlew check` in one job so its wall-clock job time is directly comparable to this branch's broad `./gradlew test` job.
+- `Test suite - fail fast`: runs `unitTest`, then `sliceTest`, then `integrationTest` as separate gated jobs.
+- `Test suite - single job`: runs `./gradlew check` in one job so its wall-clock job time is directly comparable to this branch's broad `./gradlew test` job.
 
 Each workflow writes task duration to the GitHub Actions step summary. Spring test context cache logging is enabled for Spring-based tasks so timing can be connected to context reuse.
 
