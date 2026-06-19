@@ -2,6 +2,7 @@ package com.example.test_presentation.bookkeeping.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDate;
 
 import com.example.test_presentation.bookkeeping.dto.InvoiceRequest;
 import com.example.test_presentation.bookkeeping.dto.InvoiceResponse;
@@ -50,8 +51,17 @@ public class InvoiceService {
 
 	@Transactional(readOnly = true)
 	public List<InvoiceResponse> findAll(Optional<InvoiceStatus> status) {
-		List<Invoice> invoices = status.map(invoiceRepository::findByStatus)
-				.orElseGet(invoiceRepository::findAll);
+		return findAll(Optional.empty(), status, Optional.empty());
+	}
+
+	@Transactional(readOnly = true)
+	public List<InvoiceResponse> findAll(Optional<Long> customerId, Optional<InvoiceStatus> status,
+			Optional<LocalDate> overdueOn) {
+		List<Invoice> invoices = invoiceRepository.search(
+				customerId.orElse(null),
+				status.orElse(null),
+				overdueOn.orElse(null),
+				List.of(InvoiceStatus.PAID, InvoiceStatus.VOID));
 		return invoices.stream().map(InvoiceResponse::from).toList();
 	}
 

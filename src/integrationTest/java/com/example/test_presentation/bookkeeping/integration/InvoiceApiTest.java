@@ -24,12 +24,67 @@ class InvoiceApiTest extends ApplicationIntegrationTest {
 	MockMvc mockMvc;
 
 	@ParameterizedTest(name = "filters invoices {0}")
-	@CsvSource({ "SENT,INV-SEED-001", "PAID,INV-SEED-002" })
-	void filtersInvoicesThroughFullStack(String status, String number) throws Exception {
+	@CsvSource({ "SENT,2,INV-SEED-001", "PAID,2,INV-SEED-002" })
+	void filtersInvoicesThroughFullStack(String status, int size, String number) throws Exception {
 		mockMvc.perform(get("/api/invoices").param("status", status))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$", hasSize(1)))
+				.andExpect(jsonPath("$", hasSize(size)))
 				.andExpect(jsonPath("$[0].invoiceNumber").value(number));
+	}
+
+	@ParameterizedTest(name = "filters invoices by combined query {0}-{1}-{2}")
+	@CsvSource({
+			"100,NONE,NONE,4,INV-SEED-001",
+			"101,NONE,NONE,3,INV-SEED-002",
+			"NONE,SENT,NONE,2,INV-SEED-001",
+			"NONE,DRAFT,NONE,2,INV-SEED-003",
+			"NONE,PAID,NONE,2,INV-SEED-002",
+			"NONE,VOID,NONE,1,INV-SEED-005",
+			"NONE,NONE,2026-03-01,2,INV-SEED-001",
+			"100,SENT,2026-03-01,1,INV-SEED-001",
+			"100,DRAFT,2026-03-01,0,NONE",
+			"101,SENT,2026-03-01,1,INV-SEED-006",
+			"101,DRAFT,2026-06-01,1,INV-SEED-007",
+			"100,NONE,2026-06-01,2,INV-SEED-001",
+			"101,NONE,2026-06-01,2,INV-SEED-006",
+			"NONE,SENT,2026-02-15,1,INV-SEED-001",
+			"NONE,SENT,2026-03-01,2,INV-SEED-001",
+			"NONE,DRAFT,2026-05-15,2,INV-SEED-003",
+			"100,PAID,2026-06-01,0,NONE",
+			"101,PAID,NONE,1,INV-SEED-002",
+			"101,NONE,2026-02-01,0,NONE",
+			"100,NONE,2026-02-11,1,INV-SEED-001"
+	})
+	void filtersInvoicesByCombinedQuery(String customerId, String status, String overdueOn, int size, String firstNumber)
+			throws Exception {
+		var request = get("/api/invoices");
+		if (!"NONE".equals(customerId)) {
+			request.param("customerId", customerId);
+		}
+		if (!"NONE".equals(status)) {
+			request.param("status", status);
+		}
+		if (!"NONE".equals(overdueOn)) {
+			request.param("overdueOn", overdueOn);
+		}
+
+		var result = mockMvc.perform(request)
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$", hasSize(size)));
+		if (size > 0) {
+			result.andExpect(jsonPath("$[0].invoiceNumber").value(firstNumber));
+		}
+	}
+
+	@ParameterizedTest(name = "rejects invalid invoice query {0}")
+	@CsvSource({
+			"customerId,abc",
+			"status,MISSING",
+			"overdueOn,not-a-date"
+	})
+	void rejectsInvalidInvoiceQueryParameters(String name, String value) throws Exception {
+		mockMvc.perform(get("/api/invoices").param(name, value))
+				.andExpect(status().isBadRequest());
 	}
 
 	@ParameterizedTest(name = "creates invoice {0}")

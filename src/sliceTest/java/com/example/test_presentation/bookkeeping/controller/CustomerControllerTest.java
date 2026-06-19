@@ -11,13 +11,17 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import com.example.test_presentation.bookkeeping.dto.CustomerInvoiceSummaryResponse;
 import com.example.test_presentation.bookkeeping.config.SecurityConfig;
 import com.example.test_presentation.bookkeeping.dto.CustomerRequest;
 import com.example.test_presentation.bookkeeping.dto.CustomerResponse;
+import com.example.test_presentation.bookkeeping.exception.ResourceNotFoundException;
 import com.example.test_presentation.bookkeeping.exception.RestExceptionHandler;
 import com.example.test_presentation.bookkeeping.model.CustomerStatus;
 import com.example.test_presentation.bookkeeping.service.CustomerService;
@@ -138,5 +142,45 @@ class CustomerControllerTest {
 	void deletesCustomerWhenAuthenticated(long id) throws Exception {
 		mockMvc.perform(delete("/api/customers/{id}", id).with(httpBasic("demo", "demo")))
 				.andExpect(status().isNoContent());
+	}
+
+	@ParameterizedTest(name = "returns invoice summary {0}")
+	@CsvSource({
+			"100,2026-03-01,3,150.00,120.00,80.00",
+			"101,2026-03-01,2,75.50,75.50,0.00",
+			"102,2026-04-01,4,400.00,300.00,300.00",
+			"103,2026-01-15,1,20.00,20.00,0.00",
+			"104,2026-05-10,5,999.99,500.00,250.00",
+			"105,2026-02-28,0,0.00,0.00,0.00",
+			"106,2026-06-01,6,1234.56,600.00,600.00",
+			"107,2026-03-15,2,40.00,10.00,10.00",
+			"108,2026-07-01,7,700.00,350.00,350.00",
+			"109,2026-08-01,8,800.00,0.00,0.00",
+			"110,2026-09-01,9,900.00,450.00,400.00",
+			"111,2026-10-01,10,1000.00,1000.00,1000.00"
+	})
+	void returnsInvoiceSummaryWithoutAuthentication(long customerId, String overdueOn, long invoiceCount, String total,
+			String open, String overdue) throws Exception {
+		given(customerService.invoiceSummary(eq(customerId), eq(Optional.of(LocalDate.parse(overdueOn)))))
+				.willReturn(new CustomerInvoiceSummaryResponse(customerId, invoiceCount, new BigDecimal(total),
+						new BigDecimal(open), new BigDecimal(overdue)));
+
+		mockMvc.perform(get("/api/customers/{id}/invoice-summary", customerId).param("overdueOn", overdueOn))
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$.invoiceCount").value(invoiceCount))
+				.andExpect(jsonPath("$.totalInvoiced").value(Double.parseDouble(total)))
+				.andExpect(jsonPath("$.openBalance").value(Double.parseDouble(open)))
+				.andExpect(jsonPath("$.overdueBalance").value(Double.parseDouble(overdue)));
+	}
+
+	@ParameterizedTest(name = "missing summary customer {0}")
+	@CsvSource({ "901", "902", "903", "904" })
+	void invoiceSummaryMissingCustomerReturnsNotFound(long customerId) throws Exception {
+		given(customerService.invoiceSummary(eq(customerId), eq(Optional.of(LocalDate.parse("2026-03-01")))))
+				.willThrow(new ResourceNotFoundException("Customer %d was not found".formatted(customerId)));
+
+		mockMvc.perform(get("/api/customers/{id}/invoice-summary", customerId).param("overdueOn", "2026-03-01"))
+				.andExpect(status().isNotFound())
+				.andExpect(jsonPath("$.message").value("Customer %d was not found".formatted(customerId)));
 	}
 }

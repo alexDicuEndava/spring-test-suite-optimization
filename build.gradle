@@ -99,6 +99,19 @@ tasks.register('integrationTest', Test) {
 	systemProperty 'logging.level.org.springframework.test.context.cache', 'DEBUG'
 }
 
+tasks.register('comparisonTest', Test) {
+	description = 'Runs all optimized test source sets in one task for local timing comparison.'
+	group = 'verification'
+	testClassesDirs = files(
+			sourceSets.unitTest.output.classesDirs,
+			sourceSets.sliceTest.output.classesDirs,
+			sourceSets.integrationTest.output.classesDirs)
+	classpath = sourceSets.unitTest.runtimeClasspath + sourceSets.sliceTest.runtimeClasspath + sourceSets.integrationTest.runtimeClasspath
+	useJUnitPlatform()
+	shouldRunAfter tasks.named('test')
+	systemProperty 'logging.level.org.springframework.test.context.cache', 'DEBUG'
+}
+
 tasks.named('check') {
 	dependsOn tasks.named('unitTest'), tasks.named('sliceTest'), tasks.named('integrationTest')
 }

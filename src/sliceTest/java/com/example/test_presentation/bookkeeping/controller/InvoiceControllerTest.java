@@ -59,7 +59,8 @@ class InvoiceControllerTest {
 	@CsvSource({ "DRAFT", "SENT", "PAID", "NONE" })
 	void listsInvoicesWithoutAuthentication(String status) throws Exception {
 		Optional<InvoiceStatus> filter = "NONE".equals(status) ? Optional.empty() : Optional.of(InvoiceStatus.valueOf(status));
-		given(invoiceService.findAll(filter)).willReturn(List.of(response(1L, InvoiceStatus.SENT, "125.50")));
+		given(invoiceService.findAll(Optional.empty(), filter, Optional.empty()))
+				.willReturn(List.of(response(1L, InvoiceStatus.SENT, "125.50")));
 
 		MockHttpServletRequestBuilder request = get("/api/invoices");
 		if (filter.isPresent()) {
@@ -140,6 +141,65 @@ class InvoiceControllerTest {
 	void deletesInvoiceWhenAuthenticated(long id) throws Exception {
 		mockMvc.perform(delete("/api/invoices/{id}", id).with(httpBasic("demo", "demo")))
 				.andExpect(status().isNoContent());
+	}
+
+	@ParameterizedTest(name = "lists invoices by filters {0}-{1}-{2}")
+	@CsvSource({
+			"1,SENT,2026-03-01,SENT,100.00",
+			"1,DRAFT,2026-03-01,DRAFT,101.00",
+			"1,NONE,2026-03-01,SENT,102.00",
+			"2,SENT,2026-03-01,SENT,103.00",
+			"2,PAID,NONE,PAID,104.00",
+			"2,NONE,NONE,DRAFT,105.00",
+			"3,VOID,NONE,VOID,106.00",
+			"3,NONE,2026-04-01,DRAFT,107.00",
+			"4,SENT,2026-05-01,SENT,108.00",
+			"4,DRAFT,NONE,DRAFT,109.00",
+			"5,PAID,2026-06-01,PAID,110.00",
+			"5,NONE,NONE,SENT,111.00",
+			"6,SENT,NONE,SENT,112.00",
+			"6,NONE,2026-07-01,DRAFT,113.00",
+			"7,DRAFT,2026-08-01,DRAFT,114.00",
+			"7,NONE,NONE,PAID,115.00",
+			"8,SENT,2026-09-01,SENT,116.00",
+			"8,VOID,NONE,VOID,117.00",
+			"9,NONE,2026-10-01,SENT,118.00",
+			"9,DRAFT,NONE,DRAFT,119.00",
+			"10,SENT,NONE,SENT,120.00",
+			"10,NONE,2026-11-01,DRAFT,121.00",
+			"11,PAID,NONE,PAID,122.00",
+			"11,NONE,2026-12-01,SENT,123.00"
+	})
+	void listsInvoicesWithExtendedFilters(long customerId, String status, String overdueOn, InvoiceStatus responseStatus,
+			String total) throws Exception {
+		Optional<InvoiceStatus> statusFilter = "NONE".equals(status) ? Optional.empty() : Optional.of(InvoiceStatus.valueOf(status));
+		Optional<LocalDate> overdueFilter = "NONE".equals(overdueOn) ? Optional.empty() : Optional.of(LocalDate.parse(overdueOn));
+		given(invoiceService.findAll(eq(Optional.of(customerId)), eq(statusFilter), eq(overdueFilter)))
+				.willReturn(List.of(response(20L + customerId, responseStatus, total)));
+
+		MockHttpServletRequestBuilder request = get("/api/invoices").param("customerId", Long.toString(customerId));
+		if (statusFilter.isPresent()) {
+			request.param("status", statusFilter.get().name());
+		}
+		if (overdueFilter.isPresent()) {
+			request.param("overdueOn", overdueOn);
+		}
+
+		mockMvc.perform(request)
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("$[0].status").value(responseStatus.name()))
+				.andExpect(jsonPath("$[0].total").value(Double.parseDouble(total)));
+	}
+
+	@ParameterizedTest(name = "rejects invalid invoice query {0}")
+	@CsvSource({
+			"customerId,abc",
+			"status,MISSING",
+			"overdueOn,not-a-date"
+	})
+	void rejectsInvalidInvoiceQueryParameters(String name, String value) throws Exception {
+		mockMvc.perform(get("/api/invoices").param(name, value))
+				.andExpect(status().isBadRequest());
 	}
 
 	private static InvoiceResponse response(long id, InvoiceStatus status, String total) {

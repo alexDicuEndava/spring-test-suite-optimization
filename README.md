@@ -16,20 +16,23 @@ git switch demo/bad-test-suite
 time ./gradlew clean test
 
 git switch demo/optimized-test-suite
+time ./gradlew clean comparisonTest
+
+# CI/fail-fast shape:
 time ./gradlew clean unitTest
 time ./gradlew sliceTest
 time ./gradlew integrationTest
 time ./gradlew check
 ```
 
-The optimized branch is expected to spend less time recreating Spring application contexts. Unit tests run without Spring and are parallelized by JUnit. Slice tests use focused Spring contexts. Full integration tests share stable configuration and clear database/cache state explicitly.
+Use `comparisonTest` for the fairest local wall-clock comparison against the bad branch's single broad `test` task. Use `check` to see the CI/fail-fast shape. The optimized branch is expected to spend less time recreating Spring application contexts. Unit tests run without Spring and are parallelized by JUnit. Slice tests use focused Spring contexts. Full integration tests share stable configuration and clear database/cache state explicitly.
 
 ## CI Shape
 
 The bad branch runs one broad `test` job. The optimized branch has two workflow shapes:
 
 - `Test suite - fail fast`: runs `unitTest`, then `sliceTest`, then `integrationTest` as separate gated jobs.
-- `Test suite - single job`: runs `./gradlew check` in one job so its wall-clock job time is directly comparable to the unoptimized branch's broad `./gradlew test` job.
+- `Test suite - single job`: runs `./gradlew check` in one job to show the staged suite in one CI job. For local one-task timing, use `./gradlew comparisonTest`.
 
 Each workflow writes task duration to the GitHub Actions step summary. Spring test context cache logging is enabled for Spring-based tasks so timing can be connected to context reuse.
 

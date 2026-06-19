@@ -74,12 +74,8 @@ class InvoiceServiceTest {
 	@ParameterizedTest(name = "lists invoices for {0}")
 	@MethodSource("listCases")
 	void listsInvoices(Optional<InvoiceStatus> filter, List<Invoice> stored, List<InvoiceStatus> expectedStatuses) {
-		if (filter.isPresent()) {
-			given(invoiceRepository.findByStatus(filter.get())).willReturn(stored);
-		}
-		else {
-			given(invoiceRepository.findAll()).willReturn(stored);
-		}
+		given(invoiceRepository.search(Mockito.isNull(), Mockito.eq(filter.orElse(null)), Mockito.isNull(),
+				Mockito.eq(List.of(InvoiceStatus.PAID, InvoiceStatus.VOID)))).willReturn(stored);
 
 		List<InvoiceResponse> invoices = invoiceService.findAll(filter);
 
