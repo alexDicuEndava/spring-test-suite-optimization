@@ -5,7 +5,7 @@ This repository demonstrates how Spring Boot test-suite design changes feedback 
 - `demo/bad-test-suite`: one broad test task with intentionally inefficient suite design.
 - `demo/optimized-test-suite`: unit, slice, and integration tests separated for context reuse and fail-fast CI.
 
-The sample application is a small bookkeeping REST API for customers and invoices. It includes JPA persistence, validation, minimal security for write endpoints, a cacheable customer lookup, and a test-only 500 ms Spring context startup delay that makes context recreation cost visible.
+The sample application is a small bookkeeping REST API for customers and invoices. It includes JPA persistence, validation, minimal security for write endpoints, a cacheable customer lookup, and a test-only 2 second Spring context startup delay that makes context recreation cost visible.
 
 ## Local Comparison
 

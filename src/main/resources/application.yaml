@@ -18,4 +18,4 @@ bookkeeping:
     enabled: true
   demo:
     startup-delay-enabled: false
-    startup-delay: 500ms
+    startup-delay: 2s
