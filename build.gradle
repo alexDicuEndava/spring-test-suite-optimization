@@ -18,12 +18,87 @@ repositories {
 }
 
 dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-cache'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	runtimeOnly("com.h2database:h2:2.4.240")
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-data-jpa-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+	testImplementation 'org.springframework.security:spring-security-test'
 	testImplementation("com.h2database:h2:2.4.240")
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
+sourceSets {
+	unitTest {
+		java.srcDirs = ['src/unitTest/java']
+		resources.srcDirs = ['src/unitTest/resources']
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += output + compileClasspath
+	}
+	sliceTest {
+		java.srcDirs = ['src/sliceTest/java']
+		resources.srcDirs = ['src/sliceTest/resources']
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += output + compileClasspath
+	}
+	integrationTest {
+		java.srcDirs = ['src/integrationTest/java']
+		resources.srcDirs = ['src/integrationTest/resources']
+		compileClasspath += sourceSets.main.output
+		runtimeClasspath += output + compileClasspath
+	}
+}
+
+configurations {
+	unitTestImplementation.extendsFrom testImplementation
+	unitTestRuntimeOnly.extendsFrom testRuntimeOnly
+	sliceTestImplementation.extendsFrom testImplementation
+	sliceTestRuntimeOnly.extendsFrom testRuntimeOnly
+	integrationTestImplementation.extendsFrom testImplementation
+	integrationTestRuntimeOnly.extendsFrom testRuntimeOnly
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
+	enabled = false
+}
+
+tasks.register('unitTest', Test) {
+	description = 'Runs fast unit tests without a Spring application context.'
+	group = 'verification'
+	testClassesDirs = sourceSets.unitTest.output.classesDirs
+	classpath = sourceSets.unitTest.runtimeClasspath
+	useJUnitPlatform()
+	systemProperty 'junit.jupiter.execution.parallel.enabled', 'true'
+	systemProperty 'junit.jupiter.execution.parallel.mode.default', 'concurrent'
+	systemProperty 'junit.jupiter.execution.parallel.mode.classes.default', 'concurrent'
+}
+
+tasks.register('sliceTest', Test) {
+	description = 'Runs Spring slice tests.'
+	group = 'verification'
+	testClassesDirs = sourceSets.sliceTest.output.classesDirs
+	classpath = sourceSets.sliceTest.runtimeClasspath
+	useJUnitPlatform()
+	shouldRunAfter tasks.named('unitTest')
+	systemProperty 'logging.level.org.springframework.test.context.cache', 'DEBUG'
+}
+
+tasks.register('integrationTest', Test) {
+	description = 'Runs reusable full-context integration tests.'
+	group = 'verification'
+	testClassesDirs = sourceSets.integrationTest.output.classesDirs
+	classpath = sourceSets.integrationTest.runtimeClasspath
+	useJUnitPlatform()
+	shouldRunAfter tasks.named('sliceTest')
+	systemProperty 'logging.level.org.springframework.test.context.cache', 'DEBUG'
+}
+
+tasks.named('check') {
+	dependsOn tasks.named('unitTest'), tasks.named('sliceTest'), tasks.named('integrationTest')
 }

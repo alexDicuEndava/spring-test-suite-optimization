@@ -1,3 +1,21 @@
 spring:
   application:
     name: test-presentation
+  datasource:
+    url: jdbc:h2:mem:bookkeeping;DB_CLOSE_DELAY=-1;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+  cache:
+    type: simple
+
+bookkeeping:
+  cache:
+    enabled: true
+  demo:
+    startup-delay-enabled: false
+    startup-delay: 500ms
