@@ -38,7 +38,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 @SpringBootTest(properties = {
 		"bookkeeping.demo.startup-delay-enabled=true",
-		"bookkeeping.demo.startup-delay=500ms"
+		"bookkeeping.demo.startup-delay=2s"
 })
 @AutoConfigureMockMvc
 class CustomerControllerTest {

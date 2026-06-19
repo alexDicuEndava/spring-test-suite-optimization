@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Import;
 
 @SpringBootTest(properties = {
 		"bookkeeping.demo.startup-delay-enabled=true",
-		"bookkeeping.demo.startup-delay=500ms"
+		"bookkeeping.demo.startup-delay=2s"
 })
 @AutoConfigureMockMvc
 @Import(BookkeepingTestConfiguration.class)

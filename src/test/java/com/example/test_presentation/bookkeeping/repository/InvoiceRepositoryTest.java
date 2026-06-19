@@ -23,7 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest(properties = {
 		"bookkeeping.demo.startup-delay-enabled=true",
-		"bookkeeping.demo.startup-delay=500ms",
+		"bookkeeping.demo.startup-delay=2s",
 		"spring.main.allow-bean-definition-overriding=true"
 })
 @Transactional
