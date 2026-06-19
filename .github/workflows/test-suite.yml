@@ -1,4 +1,4 @@
-name: Optimized test suite
+name: Optimized test suite - fail fast
 
 on:
   push:
