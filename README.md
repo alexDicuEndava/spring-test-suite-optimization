@@ -28,8 +28,8 @@ The optimized branch is expected to spend less time recreating Spring applicatio
 
 The bad branch runs one broad `test` job. The optimized branch has two workflow shapes:
 
-- `Optimized test suite - fail fast`: runs `unitTest`, then `sliceTest`, then `integrationTest` as separate gated jobs.
-- `Optimized test suite - single job`: runs `./gradlew check` in one job so its wall-clock job time is directly comparable to the unoptimized branch's broad `./gradlew test` job.
+- `Test suite - fail fast`: runs `unitTest`, then `sliceTest`, then `integrationTest` as separate gated jobs.
+- `Test suite - single job`: runs `./gradlew check` in one job so its wall-clock job time is directly comparable to the unoptimized branch's broad `./gradlew test` job.
 
 Each workflow writes task duration to the GitHub Actions step summary. Spring test context cache logging is enabled for Spring-based tasks so timing can be connected to context reuse.
 
