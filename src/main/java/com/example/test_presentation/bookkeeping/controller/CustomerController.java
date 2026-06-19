@@ -1,8 +1,10 @@
 package com.example.test_presentation.bookkeeping.controller;
 
 import java.util.List;
+import java.time.LocalDate;
 import java.util.Optional;
 
+import com.example.test_presentation.bookkeeping.dto.CustomerInvoiceSummaryResponse;
 import com.example.test_presentation.bookkeeping.dto.CustomerRequest;
 import com.example.test_presentation.bookkeeping.dto.CustomerResponse;
 import com.example.test_presentation.bookkeeping.model.CustomerStatus;
@@ -40,6 +42,11 @@ class CustomerController {
 	@GetMapping("/{id}")
 	CustomerResponse find(@PathVariable Long id) {
 		return customerService.find(id);
+	}
+
+	@GetMapping("/{id}/invoice-summary")
+	CustomerInvoiceSummaryResponse invoiceSummary(@PathVariable Long id, @RequestParam Optional<LocalDate> overdueOn) {
+		return customerService.invoiceSummary(id, overdueOn);
 	}
 
 	@PostMapping

@@ -2,3 +2,13 @@ INSERT INTO invoices (id, invoice_number, customer_id, status, issue_date, due_d
 VALUES (200, 'INV-SEED-001', 100, 'SENT', DATE '2026-01-10', DATE '2026-02-10', 125.50);
 INSERT INTO invoices (id, invoice_number, customer_id, status, issue_date, due_date, total)
 VALUES (201, 'INV-SEED-002', 101, 'PAID', DATE '2026-01-11', DATE '2026-02-11', 88.00);
+INSERT INTO invoices (id, invoice_number, customer_id, status, issue_date, due_date, total)
+VALUES (202, 'INV-SEED-003', 100, 'DRAFT', DATE '2026-01-12', DATE '2026-04-10', 50.00);
+INSERT INTO invoices (id, invoice_number, customer_id, status, issue_date, due_date, total)
+VALUES (203, 'INV-SEED-004', 100, 'PAID', DATE '2026-01-13', DATE '2026-01-15', 10.00);
+INSERT INTO invoices (id, invoice_number, customer_id, status, issue_date, due_date, total)
+VALUES (204, 'INV-SEED-005', 100, 'VOID', DATE '2026-01-14', DATE '2026-01-20', 15.00);
+INSERT INTO invoices (id, invoice_number, customer_id, status, issue_date, due_date, total)
+VALUES (205, 'INV-SEED-006', 101, 'SENT', DATE '2026-01-15', DATE '2026-02-20', 44.50);
+INSERT INTO invoices (id, invoice_number, customer_id, status, issue_date, due_date, total)
+VALUES (206, 'INV-SEED-007', 101, 'DRAFT', DATE '2026-01-16', DATE '2026-05-01', 20.00);

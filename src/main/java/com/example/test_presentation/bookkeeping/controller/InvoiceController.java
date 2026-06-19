@@ -1,6 +1,7 @@
 package com.example.test_presentation.bookkeeping.controller;
 
 import java.util.List;
+import java.time.LocalDate;
 import java.util.Optional;
 
 import com.example.test_presentation.bookkeeping.dto.InvoiceRequest;
@@ -33,8 +34,9 @@ class InvoiceController {
 	}
 
 	@GetMapping
-	List<InvoiceResponse> list(@RequestParam Optional<InvoiceStatus> status) {
-		return invoiceService.findAll(status);
+	List<InvoiceResponse> list(@RequestParam Optional<Long> customerId, @RequestParam Optional<InvoiceStatus> status,
+			@RequestParam Optional<LocalDate> overdueOn) {
+		return invoiceService.findAll(customerId, status, overdueOn);
 	}
 
 	@GetMapping("/{id}")
