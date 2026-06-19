@@ -1,4 +1,4 @@
-name: Bad test suite
+name: Unoptimized test suite - single job
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
   pull_request:
 
 jobs:
-  broad-test:
+  unoptimized-single-job:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -15,9 +15,9 @@ jobs:
         with:
           distribution: temurin
           java-version: '25'
-      - name: Run broad test task
+      - name: Run unoptimized suite in one job
         run: |
           start=$(date +%s)
           ./gradlew test
           end=$(date +%s)
-          echo "test: $((end - start)) seconds" >> "$GITHUB_STEP_SUMMARY"
+          echo "unoptimized single-job test: $((end - start)) seconds" >> "$GITHUB_STEP_SUMMARY"
