@@ -19,3 +19,8 @@ bookkeeping:
   demo:
     startup-delay-enabled: false
     startup-delay: 2s
+    startup-delay-bean-names:
+      - customerService
+      - invoiceService
+      - customerController
+      - invoiceController
