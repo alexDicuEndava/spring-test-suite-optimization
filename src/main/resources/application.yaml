@@ -22,5 +22,7 @@ bookkeeping:
     startup-delay-bean-names:
       - customerService
       - invoiceService
+      - reportService
       - customerController
       - invoiceController
+      - reportController
