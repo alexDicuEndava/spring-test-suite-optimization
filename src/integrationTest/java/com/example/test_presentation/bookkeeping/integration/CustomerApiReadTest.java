@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-class CustomerApiReadTest extends BookkeepingApiTestSupport {
+class CustomerApiReadTest extends ReadOnlyBookkeepingApiTestSupport {
 
 	@ParameterizedTest(name = "lists seeded customers {0}")
 	@CsvSource({ "ACTIVE,Acme Books", "INACTIVE,Dormant Ledger" })

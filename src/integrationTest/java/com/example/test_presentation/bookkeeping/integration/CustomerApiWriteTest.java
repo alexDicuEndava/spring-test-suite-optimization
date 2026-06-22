@@ -15,7 +15,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.http.MediaType;
 
-class CustomerApiWriteTest extends BookkeepingApiTestSupport {
+class CustomerApiWriteTest extends MutableBookkeepingApiTestSupport {
 
 	@ParameterizedTest(name = "creates customer {0}")
 	@CsvSource({ "New Ledger,ledger@example.test" })

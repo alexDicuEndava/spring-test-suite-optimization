@@ -7,6 +7,7 @@ import com.example.test_presentation.bookkeeping.repository.CustomerRepository;
 import com.example.test_presentation.bookkeeping.service.CustomerService;
 
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,7 @@ class CustomerCacheTest extends ApplicationIntegrationTest {
 	@Autowired
 	CacheManager cacheManager;
 
+	@BeforeEach
 	@AfterEach
 	void clearCaches() {
 		cacheManager.getCacheNames().forEach(name -> {

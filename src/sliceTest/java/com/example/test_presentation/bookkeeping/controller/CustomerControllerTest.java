@@ -18,44 +18,19 @@ import java.util.Optional;
 import java.util.stream.Stream;
 
 import com.example.test_presentation.bookkeeping.dto.CustomerInvoiceSummaryResponse;
-import com.example.test_presentation.bookkeeping.config.SecurityConfig;
 import com.example.test_presentation.bookkeeping.dto.CustomerRequest;
 import com.example.test_presentation.bookkeeping.dto.CustomerResponse;
 import com.example.test_presentation.bookkeeping.exception.ResourceNotFoundException;
-import com.example.test_presentation.bookkeeping.exception.RestExceptionHandler;
 import com.example.test_presentation.bookkeeping.model.CustomerStatus;
-import com.example.test_presentation.bookkeeping.service.CustomerService;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration;
-import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration;
-import org.springframework.boot.security.autoconfigure.web.servlet.ServletWebSecurityAutoConfiguration;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-@WebMvcTest(CustomerController.class)
-@Import({ SecurityConfig.class, RestExceptionHandler.class })
-@ImportAutoConfiguration({
-		SecurityAutoConfiguration.class,
-		SecurityFilterAutoConfiguration.class,
-		ServletWebSecurityAutoConfiguration.class
-})
-class CustomerControllerTest {
-
-	@Autowired
-	MockMvc mockMvc;
-
-	@MockitoBean
-	CustomerService customerService;
+class CustomerControllerTest extends ControllerSliceTestSupport {
 
 	@ParameterizedTest(name = "lists customers for {0}")
 	@CsvSource({ "ACTIVE", "INACTIVE", "NONE" })

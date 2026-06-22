@@ -17,43 +17,18 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
-import com.example.test_presentation.bookkeeping.config.SecurityConfig;
 import com.example.test_presentation.bookkeeping.dto.InvoiceRequest;
 import com.example.test_presentation.bookkeeping.dto.InvoiceResponse;
-import com.example.test_presentation.bookkeeping.exception.RestExceptionHandler;
 import com.example.test_presentation.bookkeeping.model.InvoiceStatus;
-import com.example.test_presentation.bookkeeping.service.InvoiceService;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
-import org.springframework.boot.security.autoconfigure.SecurityAutoConfiguration;
-import org.springframework.boot.security.autoconfigure.web.servlet.SecurityFilterAutoConfiguration;
-import org.springframework.boot.security.autoconfigure.web.servlet.ServletWebSecurityAutoConfiguration;
-import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-@WebMvcTest(InvoiceController.class)
-@Import({ SecurityConfig.class, RestExceptionHandler.class })
-@ImportAutoConfiguration({
-		SecurityAutoConfiguration.class,
-		SecurityFilterAutoConfiguration.class,
-		ServletWebSecurityAutoConfiguration.class
-})
-class InvoiceControllerTest {
-
-	@Autowired
-	MockMvc mockMvc;
-
-	@MockitoBean
-	InvoiceService invoiceService;
+class InvoiceControllerTest extends ControllerSliceTestSupport {
 
 	@ParameterizedTest(name = "lists invoices for {0}")
 	@CsvSource({ "DRAFT", "SENT", "PAID", "NONE" })

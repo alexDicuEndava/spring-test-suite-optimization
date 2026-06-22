@@ -14,7 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.http.MediaType;
 
-class InvoiceApiWriteTest extends BookkeepingApiTestSupport {
+class InvoiceApiWriteTest extends MutableBookkeepingApiTestSupport {
 
 	@ParameterizedTest(name = "creates invoice {0}")
 	@CsvSource({ "199.99" })

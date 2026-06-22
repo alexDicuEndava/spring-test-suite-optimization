@@ -13,6 +13,9 @@ import com.example.test_presentation.bookkeeping.model.CustomerStatus;
 import com.example.test_presentation.bookkeeping.model.Invoice;
 import com.example.test_presentation.bookkeeping.model.InvoiceStatus;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -23,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @DataJpaTest
 @Transactional
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class InvoiceRepositoryTest {
 
 	@Autowired
@@ -30,6 +34,19 @@ class InvoiceRepositoryTest {
 
 	@Autowired
 	InvoiceRepository invoiceRepository;
+
+	SearchFixture searchFixture;
+
+	@BeforeAll
+	void createSearchFixture() {
+		searchFixture = searchFixture();
+	}
+
+	@AfterAll
+	void cleanSearchFixture() {
+		invoiceRepository.deleteAllInBatch();
+		customerRepository.deleteAllInBatch();
+	}
 
 	@ParameterizedTest(name = "finds invoices by {0}")
 	@CsvSource({
@@ -52,10 +69,9 @@ class InvoiceRepositoryTest {
 	@ParameterizedTest(name = "searches invoices {0}-{1}-{2}")
 	@MethodSource("searchCases")
 	void searchesInvoicesByCombinedFilters(String customerKey, String status, String overdueOn, List<String> expected) {
-		SearchFixture fixture = searchFixture();
 		Long customerId = switch (customerKey) {
-			case "A" -> fixture.customerA().getId();
-			case "B" -> fixture.customerB().getId();
+			case "A" -> searchFixture.customerA().getId();
+			case "B" -> searchFixture.customerB().getId();
 			default -> null;
 		};
 		InvoiceStatus statusFilter = "NONE".equals(status) ? null : InvoiceStatus.valueOf(status);
@@ -111,10 +127,9 @@ class InvoiceRepositoryTest {
 			"NONE,EMPTY"
 	})
 	void findsInvoicesByCustomer(String customerKey, String expectedNumber) {
-		SearchFixture fixture = searchFixture();
 		Long customerId = switch (customerKey) {
-			case "A" -> fixture.customerA().getId();
-			case "B" -> fixture.customerB().getId();
+			case "A" -> searchFixture.customerA().getId();
+			case "B" -> searchFixture.customerB().getId();
 			default -> 999_999L;
 		};
 

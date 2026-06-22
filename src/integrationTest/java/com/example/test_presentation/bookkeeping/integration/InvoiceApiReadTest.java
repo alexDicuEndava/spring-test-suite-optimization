@@ -10,7 +10,7 @@ import com.example.test_presentation.bookkeeping.model.InvoiceStatus;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-class InvoiceApiReadTest extends BookkeepingApiTestSupport {
+class InvoiceApiReadTest extends ReadOnlyBookkeepingApiTestSupport {
 
 	@ParameterizedTest(name = "filters invoices {0}")
 	@CsvSource({ "SENT,2,INV-SEED-001", "PAID,2,INV-SEED-002" })
