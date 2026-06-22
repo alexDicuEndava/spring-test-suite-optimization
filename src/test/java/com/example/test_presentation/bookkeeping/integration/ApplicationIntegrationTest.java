@@ -11,6 +11,6 @@ import org.springframework.test.annotation.DirtiesContext;
 })
 @AutoConfigureMockMvc
 @Import(BookkeepingTestConfiguration.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@DirtiesContext
 abstract class ApplicationIntegrationTest {
 }
