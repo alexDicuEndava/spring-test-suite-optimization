@@ -2,7 +2,7 @@
 
 This repository demonstrates how Spring Boot test-suite design changes feedback time and CI runner usage. The comparison uses two branches with the same bookkeeping CRUD intent:
 
-- `demo/bad-test-suite`: one broad test task with intentionally inefficient suite design.
+- `demo/bad-test-suite`: one broad test task with intentionally inefficient suite design and full integration tests that dirty the Spring context after each test method.
 - `demo/optimized-test-suite`: unit, slice, and integration tests separated for context reuse and fail-fast CI.
 
 The sample application is a small bookkeeping REST API for customers and invoices. It includes JPA persistence, validation, minimal security for write endpoints, a cacheable customer lookup, and a test-only 2 second Spring context startup delay that is distributed across core bookkeeping bean initialization so context recreation cost is visible.
