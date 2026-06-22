@@ -37,7 +37,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 @SpringBootTest(properties = {
 		"bookkeeping.demo.startup-delay-enabled=true",
-		"bookkeeping.demo.startup-delay=2s"
+		"bookkeeping.demo.startup-delay=3s"
 })
 @AutoConfigureMockMvc
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)

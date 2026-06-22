@@ -7,7 +7,7 @@ import org.springframework.test.annotation.DirtiesContext;
 
 @SpringBootTest(properties = {
 		"bookkeeping.demo.startup-delay-enabled=true",
-		"bookkeeping.demo.startup-delay=2s"
+		"bookkeeping.demo.startup-delay=3s"
 })
 @AutoConfigureMockMvc
 @Import(BookkeepingTestConfiguration.class)

@@ -18,6 +18,14 @@ public interface InvoiceRepository extends JpaRepository<Invoice, Long> {
 
 	@Query("""
 			select i from Invoice i
+			join fetch i.customer c
+			where i.status not in :closedStatuses
+			order by c.name, i.dueDate, i.id
+			""")
+	List<Invoice> findOpenInvoicesForAgingReport(@Param("closedStatuses") List<InvoiceStatus> closedStatuses);
+
+	@Query("""
+			select i from Invoice i
 			where (:customerId is null or i.customer.id = :customerId)
 				and (:status is null or i.status = :status)
 				and (:overdueOn is null or (i.dueDate < :overdueOn and i.status not in :closedStatuses))
