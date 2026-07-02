@@ -13,6 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.web.servlet.MockMvc;
@@ -23,7 +26,13 @@ import org.springframework.test.web.servlet.MockMvc;
 		"/sql/reports-create.sql"
 }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(scripts = "/sql/bookkeeping-cleanup.sql", executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
-class ReportApiIntegrationTest extends ApplicationIntegrationTest {
+@SpringBootTest(properties = {
+		"bookkeeping.demo.startup-delay-enabled=true",
+		"bookkeeping.demo.startup-delay=3s"
+})
+@AutoConfigureMockMvc
+@Import(BookkeepingTestConfiguration.class)
+class ReportApiIntegrationTest {
 
 	@Autowired
 	MockMvc mockMvc;

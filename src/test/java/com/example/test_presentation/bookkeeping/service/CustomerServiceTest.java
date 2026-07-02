@@ -27,7 +27,9 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
+import org.springframework.boot.test.context.SpringBootTest;
 
+@SpringBootTest
 class CustomerServiceTest {
 
 	private final CustomerRepository customerRepository = Mockito.mock(CustomerRepository.class);

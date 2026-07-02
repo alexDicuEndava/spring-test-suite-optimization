@@ -21,12 +21,15 @@ import com.example.test_presentation.bookkeeping.model.InvoiceStatus;
 import com.example.test_presentation.bookkeeping.repository.CustomerRepository;
 import com.example.test_presentation.bookkeeping.repository.InvoiceRepository;
 
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mockito;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
 class InvoiceServiceTest {
 
 	private final InvoiceRepository invoiceRepository = Mockito.mock(InvoiceRepository.class);

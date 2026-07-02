@@ -3,9 +3,12 @@ package com.example.test_presentation.bookkeeping.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+@ExtendWith(SpringExtension.class)
 class SequentialInvoiceNumberGeneratorTest {
 
 	@RepeatedTest(5)
